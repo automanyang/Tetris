@@ -7,6 +7,6 @@ mod tetris;
 
 fn main() {
     let app = fltk::app::App::default();
-    let _tetris = tetris::TetrisWindow::init();
+    let _tetris = tetris::TetrisWindow::new_box();
     app.run().unwrap();
 }

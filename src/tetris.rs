@@ -67,7 +67,7 @@ space: drop"#,
             interval: Self::DEFAULT_INTERVAL,
         }
     }
-    pub(crate) fn init() -> Box<Self> {
+    pub(crate) fn new_box() -> Box<Self> {
         unsafe {
             assert!(TETRIS_PTR.is_null());
         }
