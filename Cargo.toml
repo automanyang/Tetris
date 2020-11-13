@@ -1,0 +1,17 @@
+[package]
+name = "tetris"
+version = "0.1.0"
+authors = ["automanyang <automanyang@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+fltk = { version = "^0.10" }
+rand = { version = "0.7.3" }
+
+[profile.release]
+opt-level = 'z'     # Optimize for size.
+lto = true          # Enable Link Time Optimization
+codegen-units = 1   # Reduce number of codegen units to increase optimizations.
+panic = 'abort'     # Abort on panic
