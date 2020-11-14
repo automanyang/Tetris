@@ -9,9 +9,9 @@ use std::ops::{Deref, DerefMut};
 /*
 
        first column is 0
-           |        last colume is 15
-           |              |
-           V              v
+           |           last colume is 15
+           |                 |
+           V                 v
     20  0b_1110_0000_0000_0111      <-- row number: 20
     19  0b_1110_0000_0000_0111
     18  0b_1110_0000_0000_0111
@@ -233,10 +233,10 @@ impl Stage {
                     }
                 }
                 " " => {
-                    self.row = self.shadow_row;         // fall down
-                    TetrisWindow::get_mut().recount();  // reset the timeout count
+                    self.row = self.shadow_row; // fall down
+                    TetrisWindow::get_mut().recount(); // reset the timeout count
                 }
-                "\u{1b}" => ret = false,                // ESC received
+                "\u{1b}" => ret = false, // ESC received
                 _ => {}
             }
         }

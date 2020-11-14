@@ -41,7 +41,7 @@ impl Block {
     const COLORS: [Color; Self::BLOCKS_COUNT] = [
         Color::Red,         // I
         Color::DarkBlue,    // O
-        Color::DarkCyan,       // Z
+        Color::DarkCyan,    // Z
         Color::DarkMagenta, // S
         Color::Blue,        // L
         Color::DarkGreen,   // J
@@ -122,7 +122,7 @@ impl Block {
     pub(crate) fn data(&self) -> u16 {
         Self::DATA[self.index][self.posture.index()]
     }
-    // pub(crate) fn 
+    // pub(crate) fn
     pub(crate) fn draw(&self, x: i32, y: i32, c: Option<Color>) {
         let mut cell_x = x + Self::cell_size() * 3 + Self::CELL_EDGE;
         let mut cell_y = y + Self::cell_size() * 3 + Self::CELL_EDGE;

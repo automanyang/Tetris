@@ -126,7 +126,7 @@ impl BlockBoard {
             bb.draw();
         });
         ptr.wid.redraw();
-        
+
         ptr
     }
     fn draw(&mut self) {

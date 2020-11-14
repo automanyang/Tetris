@@ -67,7 +67,7 @@ space: drop"#,
             level,
             score,
             interval: Self::DEFAULT_INTERVAL,
-            count: 0
+            count: 0,
         }
     }
     pub(crate) fn new_box() -> Box<Self> {

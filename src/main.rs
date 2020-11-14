@@ -1,3 +1,7 @@
+#![windows_subsystem = "windows"]
+
+// --
+
 mod blocks;
 mod boards;
 mod stage;
