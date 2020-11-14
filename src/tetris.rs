@@ -113,15 +113,17 @@ space: drop"#,
         }
 
         let removed = self.stage.tick();
-        self.lines.set_value(self.lines.value() + removed);
-
-        const LINES_PER_LEVEL: i32 = 10;
-        let level = self.level.value();
-        if level * LINES_PER_LEVEL < self.lines.value() {
-            self.level.set_value(level + 1);
-            self.interval *= 0.9;
+        if removed > 0 {
+            self.lines.set_value(self.lines.value() + removed);
+    
+            const LINES_PER_LEVEL: i32 = 10;
+            let level = self.level.value();
+            if level * LINES_PER_LEVEL < self.lines.value() {
+                self.level.set_value(level + 1);
+                self.interval *= 0.9;
+            }
+    
+            self.score.set_value(self.score.value() + removed * removed);
         }
-
-        self.score.set_value(self.score.value() + removed * removed);
     }
 }

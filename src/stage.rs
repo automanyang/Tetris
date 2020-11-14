@@ -183,6 +183,8 @@ impl Stage {
             }
         }
         self.dropping.take();
+        TetrisWindow::get_mut().recount();
+        
         removed
     }
     fn collide_at(&self, col: i32, row: i32, data: u16) -> bool {
