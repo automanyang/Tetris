@@ -139,7 +139,7 @@ space: drop"#,
                     self.score.set_value(self.score.value() + removed * removed);
                 }
             }
-            _ => {
+            Status::Dropping => {
                 self.recount();
             }
         }
