@@ -1,6 +1,6 @@
 use crate::blocks::Block;
 use crate::boards::{BlockBoard, TextBoard, ValueBoard};
-use crate::stage::Stage;
+use crate::stage::{Stage, Status};
 use fltk::{group::Pack, window::DoubleWindow, GroupExt, WidgetBase, WidgetExt, WindowExt};
 
 // --
@@ -91,39 +91,57 @@ space: drop"#,
         }
     }
     pub(crate) fn recount(&mut self) {
-        // after falling down, there should be about 0.2 ~ 0.4 second to move the block left or right.
-        let percent: f64 = 0.7 * (Self::DEFAULT_COUNT as f64);
-        self.count = (self.interval / Self::DEFAULT_INTERVAL * percent) as usize;
+        self.count = 0;
     }
-    pub(crate) fn clean(&mut self) {
+    fn clean(&mut self) {
         self.lines.set_value(0);
         self.level.set_value(1);
         self.score.set_value(0);
         self.interval = Self::DEFAULT_INTERVAL;
+
+        self.stage.reset();
     }
     fn tick(&mut self) {
         if self.count < Self::DEFAULT_COUNT {
             self.count += 1;
             return;
         }
-        self.count = 0;
 
-        if self.stage.need_block() {
-            self.stage.next_block(self.generator.next())
-        }
-
-        let removed = self.stage.tick();
-        if removed > 0 {
-            self.lines.set_value(self.lines.value() + removed);
-    
-            const LINES_PER_LEVEL: i32 = 10;
-            let level = self.level.value();
-            if level * LINES_PER_LEVEL < self.lines.value() {
-                self.level.set_value(level + 1);
-                self.interval *= 0.9;
+        match self.stage.tick() {
+            Status::NeedBlock => {
+                if self.stage.is_fulled(self.generator.next()) {
+                    let s = fltk::app::screen_size();
+                    match fltk::dialog::choice(
+                        (s.0 / 2.0) as i32 - 100,
+                        (s.1 / 2.0) as i32 - 100,
+                        "Boomed!!!\n\nDo you want to try again?",
+                        "&Yes",
+                        "&No",
+                        "",
+                    ) {
+                        0 => self.clean(),
+                        1 => std::process::exit(0),
+                        _ => {}
+                    }
+                }
             }
-    
-            self.score.set_value(self.score.value() + removed * removed);
+            Status::Freeze(removed) => {
+                if removed > 0 {
+                    self.lines.set_value(self.lines.value() + removed);
+
+                    const LINES_PER_LEVEL: i32 = 10;
+                    let level = self.level.value();
+                    if level * LINES_PER_LEVEL < self.lines.value() {
+                        self.level.set_value(level + 1);
+                        self.interval *= 0.9;
+                    }
+
+                    self.score.set_value(self.score.value() + removed * removed);
+                }
+            }
+            _ => {
+                self.recount();
+            }
         }
     }
 }

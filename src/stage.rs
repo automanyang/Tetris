@@ -34,8 +34,13 @@ use std::ops::{Deref, DerefMut};
     1   0b_1110_0000_0000_0111
     0   0b_1111_1111_1111_1111      < --- row number: 0
 
-
 */
+
+pub(crate) enum Status {
+    NeedBlock,
+    Dropping,
+    Freeze(i32),
+}
 
 pub(crate) struct Stage {
     wid: Widget,
@@ -99,52 +104,36 @@ impl Stage {
             b.draw(x, y, None);
         };
     }
-    pub(crate) fn need_block(&self) -> bool {
-        self.dropping.is_none()
-    }
-    pub(crate) fn next_block(&mut self, b: Block) {
+    pub(crate) fn is_fulled(&mut self, b: Block) -> bool {
         self.dropping = Some(b);
         self.row = Self::ROWS_COUNT - 1;
         self.col = 7;
         self.shadow_row = 0;
+        self.shadow();
+        self.wid.redraw();
+
+        self.collide_at(self.col, self.row, b.data())
     }
-    pub(crate) fn tick(&mut self) -> i32 {
-        let mut removed = 0;
+    pub(crate) fn tick(&mut self) -> Status {
+        let mut status = Status::NeedBlock;
         if let Some(block) = self.dropping.as_ref() {
             if self.collide_at(self.col, self.row - 1, block.data()) {
-                removed = self.freeze();
+                status = Status::Freeze(self.freeze());
             } else {
                 self.row -= 1;
+                status = Status::Dropping;
             }
             self.wid.redraw();
         }
-        if self.shadow_row == 0 {
-            self.shadow();
-        }
-        if self.row == Self::ROWS_COUNT - 1 {
-            let s = fltk::app::screen_size();
-            match fltk::dialog::choice(
-                (s.0 / 2.0) as i32 - 100,
-                (s.1 / 2.0) as i32 - 100,
-                "Boomed!!!\n\nDo you want to try again?",
-                "&Yes",
-                "&No",
-                "",
-            ) {
-                0 => self.reset(),
-                1 => std::process::exit(0),
-                _ => {}
-            }
-        }
-        removed
+        status
     }
-    fn reset(&mut self) {
+    pub(crate) fn reset(&mut self) {
+        self.dropping.take();
         self.rows
             .iter_mut()
             .skip(1)
             .for_each(|r| *r = Self::DEFAULT_ROW_DATA);
         self.wid.redraw();
-        TetrisWindow::get_mut().clean();
     }
     fn shadow(&mut self) {
         if let Some(block) = self.dropping {
@@ -183,8 +172,6 @@ impl Stage {
             }
         }
         self.dropping.take();
-        TetrisWindow::get_mut().recount();
-        
         removed
     }
     fn collide_at(&self, col: i32, row: i32, data: u16) -> bool {
