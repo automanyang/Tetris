@@ -22,10 +22,12 @@ pub(crate) struct TetrisWindow {
     pub(crate) score: Box<ValueBoard>,
 
     pub(crate) interval: f64,
+    pub(crate) count: usize,
 }
 
 impl TetrisWindow {
-    const DEFAULT_INTERVAL: f64 = 1.0;
+    const DEFAULT_COUNT: usize = 10;
+    const DEFAULT_INTERVAL: f64 = 0.1;
     fn new() -> Self {
         let mut wind = DoubleWindow::default()
             .with_label("Tetris")
@@ -65,6 +67,7 @@ space: drop"#,
             level,
             score,
             interval: Self::DEFAULT_INTERVAL,
+            count: 0
         }
     }
     pub(crate) fn new_box() -> Box<Self> {
@@ -94,6 +97,12 @@ space: drop"#,
         self.interval = Self::DEFAULT_INTERVAL;
     }
     fn tick(&mut self) {
+        if self.count < Self::DEFAULT_COUNT {
+            self.count += 1;
+            return;
+        }
+        self.count = 0;
+
         if self.stage.need_block() {
             self.stage.next_block(self.generator.next())
         }

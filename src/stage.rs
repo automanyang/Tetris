@@ -232,7 +232,10 @@ impl Stage {
                         self.row -= 1;
                     }
                 }
-                " " => self.row = self.shadow_row, // fall down
+                " " => {
+                    self.row = self.shadow_row; // fall down
+                    TetrisWindow::get_mut().count = 7;  // reset the timeout count
+                }
                 "\u{1b}" => ret = false,           // ESC received
                 _ => {}
             }
