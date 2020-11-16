@@ -90,6 +90,11 @@ space: drop"#,
             &mut *ptr as &mut Self
         }
     }
+    pub(crate) fn recount(&mut self) {
+        // after falling down, there should be about 0.2 ~ 0.4 second to move the block left or right.
+        let percent: f64 = 0.7 * (Self::DEFAULT_COUNT as f64);
+        self.count = (self.interval / Self::DEFAULT_INTERVAL * percent) as usize;
+    }
     pub(crate) fn clean(&mut self) {
         self.lines.set_value(0);
         self.level.set_value(1);
