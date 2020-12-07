@@ -123,6 +123,8 @@ space: drop"#,
                         1 => std::process::exit(0),
                         _ => {}
                     }
+                } else {
+                    self.recount();
                 }
             }
             Status::Freeze(removed) => {
