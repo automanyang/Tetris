@@ -1,5 +1,12 @@
+// -- boards.rs --
+
 use crate::blocks::Block;
-use fltk::{draw, widget::*, WidgetBase, WidgetExt};
+use fltk::{
+    draw,
+    enums::{Align, Color, FrameType},
+    prelude::{WidgetBase, WidgetExt},
+    widget::*,
+};
 use std::ops::{Deref, DerefMut};
 
 // --
@@ -19,7 +26,7 @@ pub(crate) struct TextBoard;
 impl TextBoard {
     pub(crate) fn new(x: i32, y: i32, w: i32, h: i32, text: String) -> Self {
         let mut wid = Widget::new(x, y, w, h, "");
-        wid.draw2(move |w| {
+        wid.draw(move |w| {
             draw::draw_box(
                 FrameType::FlatBox,
                 w.x(),
@@ -50,13 +57,13 @@ pub(crate) struct ValueBoard {
     value: i32,
 }
 impl ValueBoard {
-    pub(crate) fn new_box(x: i32, y: i32, w: i32, h: i32, label: &str) -> Box<Self> {
+    pub(crate) fn new_box(x: i32, y: i32, w: i32, h: i32, label: &'static str) -> Box<Self> {
         let mut wid = Widget::new(x, y, w, h, label).with_align(Align::Top | Align::Left);
         wid.set_label_size(24);
 
         let mut ptr = Box::new(Self { wid, value: 0 });
         let vb = ptr.as_mut() as *mut Self;
-        ptr.wid.draw(move || {
+        ptr.wid.draw(move |_| {
             let vb = Self::unsafe_mut_from(vb);
             vb.draw();
         });
@@ -113,7 +120,7 @@ pub(crate) struct BlockBoard {
 }
 
 impl BlockBoard {
-    pub(crate) fn new_box(x: i32, y: i32, w: i32, h: i32, label: &str) -> Box<Self> {
+    pub(crate) fn new_box(x: i32, y: i32, w: i32, h: i32, label: &'static str) -> Box<Self> {
         let mut wid = Widget::new(x, y, w, h, label);
         wid.set_label_size(24);
         wid.set_align(Align::Top | Align::Left);
@@ -121,7 +128,7 @@ impl BlockBoard {
         let mut ptr = Box::new(Self { wid, block });
 
         let bb = ptr.as_mut() as *mut Self;
-        ptr.wid.draw(move || {
+        ptr.wid.draw(move |_| {
             let bb = Self::unsafe_mut_from(bb);
             bb.draw();
         });

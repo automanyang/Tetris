@@ -1,7 +1,12 @@
-use crate::blocks::Block;
-use crate::boards::UnsafeFrom;
-use crate::tetris::TetrisWindow;
-use fltk::{draw, widget::*, Event, WidgetBase, WidgetExt};
+// -- stage.rs --
+
+use crate::{blocks::Block, boards::UnsafeFrom, tetris::TetrisWindow};
+use fltk::{
+    draw,
+    enums::{Event, FrameType, Color},
+    prelude::{WidgetBase, WidgetExt},
+    widget::*,
+};
 use std::ops::{Deref, DerefMut};
 
 // --
@@ -58,7 +63,7 @@ impl Stage {
     const GROUND_ROW_DATA: u16 = 0b1111_1111_1111_1111;
     const LEFT_EDGE_COL: i32 = 3;
 
-    pub(crate) fn new(x: i32, y: i32, w: i32, h: i32, label: &str) -> Box<Self> {
+    pub(crate) fn new(x: i32, y: i32, w: i32, h: i32, label: &'static str) -> Box<Self> {
         let mut rows = [Self::DEFAULT_ROW_DATA; Self::ROWS_COUNT as usize];
         rows[0] = Self::GROUND_ROW_DATA;
         let wid = Widget::new(x, y, w, h, label);
@@ -72,12 +77,12 @@ impl Stage {
         });
 
         let bb = ptr.as_mut() as *mut Self;
-        ptr.wid.handle(move |ev| {
+        ptr.wid.handle(move |_, ev| {
             let bb = Self::unsafe_mut_from(bb);
             bb.handle(ev)
         });
         let bb = ptr.as_mut() as *mut Self;
-        ptr.wid.draw(move || {
+        ptr.wid.draw(move |_| {
             let bb = Self::unsafe_mut_from(bb);
             bb.draw();
         });

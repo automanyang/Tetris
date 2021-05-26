@@ -1,7 +1,13 @@
+// -- tetris.rs
+
 use crate::blocks::Block;
 use crate::boards::{BlockBoard, TextBoard, ValueBoard};
 use crate::stage::{Stage, Status};
-use fltk::{group::Pack, window::DoubleWindow, GroupExt, WidgetBase, WidgetExt, WindowExt};
+use fltk::{
+    group::Pack,
+    prelude::{GroupExt, WidgetBase, WidgetExt, WindowExt},
+    window::DoubleWindow,
+};
 
 // --
 
